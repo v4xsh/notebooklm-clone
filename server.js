@@ -26,13 +26,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Setup multer for file uploads
-const upload = multer({ dest: 'uploads/' });
-
-// Ensure uploads directory exists
-if (!fs.existsSync('uploads')){
-    fs.mkdirSync('uploads');
-}
+// Setup multer for memory storage
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Global variable to store current collection name
 let currentCollectionName = "notebooklm-clone-default";
@@ -59,11 +54,11 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        const filePath = req.file.path;
+        const filePath = req.file.originalname;
         console.log(`Processing file: ${req.file.originalname}`);
 
-        // 1. Ingestion: Extract text from PDF
-        const dataBuffer = fs.readFileSync(filePath);
+        // 1. Ingestion: Extract text from PDF from buffer
+        const dataBuffer = req.file.buffer;
         const pdfData = await pdfParse(dataBuffer);
         const text = pdfData.text;
 
@@ -92,9 +87,6 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         });
 
         console.log(`Indexed into Qdrant collection: ${currentCollectionName}`);
-
-        // Cleanup uploaded file
-        fs.unlinkSync(filePath);
 
         res.json({ message: 'Document successfully processed and indexed.', chunkCount: docs.length });
     } catch (error) {
@@ -146,6 +138,10 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
+
+export default app;
