@@ -1,0 +1,23 @@
+{
+  "name": "notebooklm-clone",
+  "version": "1.0.0",
+  "description": "Google NotebookLM Clone",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.52.0",
+    "@langchain/core": "^0.3.15",
+    "@langchain/google-genai": "^0.1.2",
+    "@langchain/qdrant": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "langchain": "^0.3.5",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1"
+  }
+}
