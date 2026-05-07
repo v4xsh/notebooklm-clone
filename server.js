@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Setup multer for memory storage
 const upload = multer({ storage: multer.memoryStorage() });
@@ -46,6 +46,10 @@ const llm = new ChatGoogleGenerativeAI({
     model: "gemini-2.5-flash",
     apiKey: process.env.GEMINI_API_KEY,
     temperature: 0.2,
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.post('/api/upload', upload.single('file'), async (req, res) => {
