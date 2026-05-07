@@ -52,6 +52,8 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
         if (!req.file) {
